@@ -1,7 +1,7 @@
 import Sequelize from "sequelize";
 import {sequelize} from '../core/conection';
 
-const User = sequelize.define('Usuario',{
+const User = sequelize.define('usuario',{ 
     email:{
         type: Sequelize.STRING ,
         primaryKey: true
@@ -35,7 +35,7 @@ const User = sequelize.define('Usuario',{
         type: Sequelize.STRING 
     },
 
-    CodInst:{
+    codinst:{
         type: Sequelize.INTEGER
     }
 },

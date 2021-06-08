@@ -5,9 +5,9 @@ const { Sequelize } = require('sequelize');
 
 // Option 2: Passing parameters separately (other dialects)
 export const sequelize = new Sequelize(
-  'golive_db', // db name
-  'postgres',  // username
-  "",          // pass
+  'golive_db',          // db name
+  'postgres',           // username
+  'pass',               // pass
   {
     host: 'localhost',
     dialect:'postgres',

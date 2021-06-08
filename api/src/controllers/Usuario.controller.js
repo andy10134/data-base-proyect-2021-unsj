@@ -1,9 +1,10 @@
-import Usuario from "../models/Usuario";
+import User from "../models/Usuario";
 
+//
 export async function viewUsuarios(req, res) {
-    const usuarios = await Usuario.findAll();
+    const users = await User.findAll();
     console.log(req.body);
     res.json({
-        data: usuarios
+        data: users
     });
 }

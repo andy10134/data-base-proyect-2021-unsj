@@ -5,12 +5,14 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Concept - Bootstrap 4 Admin Dashboard Template</title>
+    <title>Registrarse</title>
+    <link href="{{ url_for('static', filename='home/img/favicon.ico') }}" rel="icon">
+	<link href="{{ url_for('static', filename='home/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link href="../assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/libs/css/style.css">
-    <link rel="stylesheet" href="../assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
+    <link href="{{ url_for('static', filename='vendor/fonts/circular-std/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='libs/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fonts/fontawesome/css/fontawesome-all.css') }}">
     <style>
     html,
     body {
@@ -18,6 +20,10 @@
     }
 
     body {
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(45deg, rgba(11, 0, 80, 0.9) 0%, rgba(4, 210, 115, 0.9) 100%), url("{{ url_for('static', filename='images/hero-bg.jpg') }}") center center no-repeat;
+        background-size: cover;
         display: -ms-flexbox;
         display: flex;
         -ms-flex-align: center;
@@ -35,47 +41,46 @@
     <!-- ============================================================== -->
     <!-- signup form  -->
     <!-- ============================================================== -->
-    <form class="splash-container">
+    <form class="splash-container" action="/registrarse" method="POST">
         <div class="card">
             <div class="card-header">
-                <h3 class="mb-1">Registrations Form</h3>
-                <p>Please enter your user information.</p>
+                <h3 class="mb-1">Formulario de Registro</h3>
+                <p>Por favor ingrese los datos de su cuenta.</p>
             </div>
             <div class="card-body">
                 <div class="form-group">
-                    <input class="form-control form-control-lg" type="text" name="nick" required="" placeholder="Username" autocomplete="off">
+                    <input class="form-control form-control-lg" type="text" name="name" required="" placeholder="Nombre" autocomplete="off">
                 </div>
                 <div class="form-group">
-                    <input class="form-control form-control-lg" type="email" name="email" required="" placeholder="E-mail" autocomplete="off">
+                    <input class="form-control form-control-lg" type="text" name="lastname" required="" placeholder="Apellido" autocomplete="off">
                 </div>
                 <div class="form-group">
-                    <input class="form-control form-control-lg" id="pass1" type="password" required="" placeholder="Password">
+                    <input class="form-control form-control-lg" type="text" name="nick" required="" placeholder="Usuario" autocomplete="off">
                 </div>
                 <div class="form-group">
-                    <input class="form-control form-control-lg" required="" placeholder="Confirm">
+                    <input class="form-control form-control-lg" type="date" name="date" required="" placeholder="Fecha de nacimiento" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <input class="form-control form-control-lg" type="number" name="phone" required="" placeholder="Teléfono" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <input class="form-control form-control-lg" type="email" name="email" required="" placeholder="Email" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <input class="form-control form-control-lg" id="pass1" type="password" name="password" required="" placeholder="Contraseña">
                 </div>
                 <div class="form-group pt-2">
-                    <button class="btn btn-block btn-primary" type="submit">Register My Account</button>
-                </div>
-                <div class="form-group">
-                    <label class="custom-control custom-checkbox">
-                        <input class="custom-control-input" type="checkbox"><span class="custom-control-label">By creating an account, you agree the <a href="#">terms and conditions</a></span>
-                    </label>
-                </div>
-                <div class="form-group row pt-0">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mb-2">
-                        <button class="btn btn-block btn-social btn-facebook " type="button">Facebook</button>
-                    </div>
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                        <button class="btn  btn-block btn-social btn-twitter" type="button">Twitter</button>
-                    </div>
+                    <button class="btn btn-block btn-primary" type="submit">Registrar mi cuenta</button>
                 </div>
             </div>
             <div class="card-footer bg-white">
-                <p>Already member? <a href="#" class="text-secondary">Login Here.</a></p>
+                <p>Ya tienes una cuenta? <a href="/ingresar" class="text-secondary">Inicia sesión aquí.</a></p>
             </div>
         </div>
     </form>
+
+    <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
+    <div id="preloader"></div>
 </body>
 
  

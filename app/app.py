@@ -9,7 +9,8 @@ app = Flask(__name__)
 def index():
     
     if 'email' in session:
-        r = requests.get('https://reqres.in/api/users')
+        headersAPI = {'Authorization': 'Bearer '+session['token']}
+        r = requests.get('https://reqres.in/api/users', headers=headersAPI)
         data = r.json()
         return render_template('index.html', disciplinas = data['data'], sesion = session)
     else:
@@ -19,21 +20,21 @@ def index():
 @app.route('/disc-usuarios', methods=["GET", "POST"])
 def listarUsuarios():
     r = requests.get('/usuarios')
-    return render_template('disc-usuarios.html')
+    return render_template('disc-usuarios.html', usuarios = data['data'], sesion = session)
 
 @app.route('/asistencias', methods=["GET", "POST"])
 def listarAsitencias():
     r = requests.get('/asistencias')
-    return render_template('asistencias.html')
+    return render_template('asistencias.html', asistencias = data['data'], sesion = session)
 
 @app.route('/inscripciones', methods=["GET", "POST"])
 def listarInscripciones():
     r = requests.get()
-    return render_template('inscripciones.html')
+    return render_template('inscripciones.html', inscripciones = data['data'], sesion = session)
 
 @app.route('/disciplinas-entrenadores-horarios', methods=["GET", "POST"])
 def listarDEH():
-    return render_template('disciplinas-entrenadores-horarios.html')
+    return render_template('disciplinas-entrenadores-horarios.html', deh = data['data'], sesion = session)
 
 @app.route('/registrarse')
 def registrar():
@@ -100,13 +101,22 @@ def handledata():
         if(request.form['email'] and request.form['password']):
             
             try:
-                #r = el get va aca
+                params = {'email' : request.form['email'], 'password' : request.form['password']}
+                r = requests.post("", json=params)
                 r.raise_for_status()
             except requests.exceptions.RequestException: 
                 flash('Verifica tus credenciales de acceso, DNI o contraseña inválidos')
                 return redirect(url_for('ingresar')) 
             else:
-                #aca guardar todo lo de sesion
+                session['email'] = request.form['email']
+                session['password'] = request.form['password']
+                session['nomInst'] = r['']
+                session['adress'] = r['']
+                session['phone'] = r['']
+                session['numUsu'] = r['']
+                session['numEntr'] = r['']
+                session['numDisc'] = r['']
+                session['token'] = = r['']
                 return redirect(url_for('index'))
         else:
             flash('Verifica tus credenciales de acceso, DNI o contraseña inválidos')

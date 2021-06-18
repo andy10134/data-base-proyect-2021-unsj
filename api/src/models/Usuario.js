@@ -1,42 +1,68 @@
 import Sequelize from "sequelize";
-import {sequelize} from '../core/conection';
+//import {sequelize} from '../core/conection';
 
-const User = sequelize.define('usuario',{ 
+import sequelize from '../db/db';
+
+import Genero from "./Genero";
+import Institucion from "./Institucion";
+
+const User = sequelize.define('usuarios',{ 
     email:{
-        type: Sequelize.STRING ,
+        type: Sequelize.STRING(30) ,
         primaryKey: true
     },
 
     nombre:{
-        type: Sequelize.STRING 
+        type: Sequelize.STRING(30),
+        allowNull:false 
     },
 
     apellido:{
-        type: Sequelize.STRING 
+        type: Sequelize.STRING(30),
+        allowNull:false 
     },
 
-    numero_telefono:{
-        type: Sequelize.STRING 
+    numerotelefono:{
+        type: Sequelize.STRING(30),
+        allowNull:false 
     },
     
     nombredeusuario:{
-        type: Sequelize.STRING 
+        type: Sequelize.STRING(30),
+        allowNull:false 
     },
 
-    fecha_de_nacimiento:{
-        type: Sequelize.DATE 
+    contraseña:{
+        type: Sequelize.STRING(255),
+        allowNull:false
+    },
+
+    fechanacimiento:{
+        type: Sequelize.DATEONLY,
+        allowNull:false                    
     },
 
     nombregenero:{
-        type: Sequelize.STRING 
+        type: Sequelize.STRING(30), 
+        references: {
+            model: Genero,
+            key: 'nombregenero'
+          },
+        allowNull:false 
     },
 
-    tipo_usuario:{
-        type: Sequelize.STRING 
+    tipousuario:{
+        type: Sequelize.STRING(30),
+        allowNull:false 
     },
 
     codinst:{
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+            model: Institucion,
+            key: 'codinst'
+        },
+        allowNull:true
     }
 },
 {
@@ -44,4 +70,4 @@ const User = sequelize.define('usuario',{
 }
 );
 
-export default User;
+export default User; 

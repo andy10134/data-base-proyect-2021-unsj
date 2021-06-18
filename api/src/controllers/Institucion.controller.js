@@ -1,6 +1,7 @@
 import Disciplina from "../models/Disciplina";
 import Institucion from "../models/Institucion";
 import InstitucionDisciplina from "../models/Institucion_disciplina";
+import Dicta from "../models/Dicta";
 import Sala from "../models/Sala";
 
 import { validationResult } from 'express-validator';
@@ -216,6 +217,32 @@ export async function viewInstitucionesEntrenadores(req, res) {
             msg: 'Unauthorized'
         });
     } else {
+        Institucion.findByPk(user.codinst, {
+            include:[
+                {
+                    model: Sala,
+                    include:{
+                        model:Dicta,
+                        attributes:['email','nombredisciplina' , 'nombredia','inicio', 'fin']
+                    }
+                }
+            ],
+        }).then(clases => {
+            if (!clases) {
+                res.status(404).json({
+                    mgs: 'Invalid codinst'
+                });
+            } else {
+                res.status(200).json({
+                    data: clases
+                });
+            }
+        }).catch(error => {
+            res.status(500).json({
+                msg: 'Something goes wrong here',
+                error: error
+            });
+        });
 
     }
 }

@@ -15,6 +15,8 @@ var _Institucion = _interopRequireDefault(require("../models/Institucion"));
 
 var _Institucion_disciplina = _interopRequireDefault(require("../models/Institucion_disciplina"));
 
+var _Dicta = _interopRequireDefault(require("../models/Dicta"));
+
 var _Sala = _interopRequireDefault(require("../models/Sala"));
 
 var _expressValidator = require("express-validator");
@@ -220,7 +222,32 @@ function viewInstitucionesEntrenadores(req, res) {
             res.status(401).json({
               msg: 'Unauthorized'
             });
-          } else {}
+          } else {
+            _Institucion["default"].findByPk(user.codinst, {
+              include: [{
+                model: _Sala["default"],
+                include: {
+                  model: _Dicta["default"],
+                  attributes: ['email', 'nombredisciplina', 'nombredia', 'inicio', 'fin']
+                }
+              }]
+            }).then(function (clases) {
+              if (!clases) {
+                res.status(404).json({
+                  mgs: 'Invalid codinst'
+                });
+              } else {
+                res.status(200).json({
+                  data: clases
+                });
+              }
+            })["catch"](function (error) {
+              res.status(500).json({
+                msg: 'Something goes wrong here',
+                error: error
+              });
+            });
+          }
 
         case 3:
         case "end":

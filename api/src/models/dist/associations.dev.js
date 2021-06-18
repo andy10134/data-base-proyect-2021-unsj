@@ -141,6 +141,14 @@ _Dicta["default"].belongsTo(_Sala["default"], {
 
 _Dicta["default"].belongsTo(_Disciplina["default"], {
   foreignKey: "nombredisciplina"
+});
+
+_Dicta["default"].belongsTo(_Sala["default"], {
+  foreignKey: 'salaid'
+});
+
+_Sala["default"].hasMany(_Dicta["default"], {
+  foreignKey: 'salaid'
 }); //Asiste
 
 

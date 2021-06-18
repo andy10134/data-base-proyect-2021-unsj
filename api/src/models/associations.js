@@ -59,6 +59,8 @@ Dicta.belongsTo(User, {foreignKey: "email", as: 'entrenador'});
 Dicta.belongsTo(Dia, {foreignKey: "nombredia"});
 Dicta.belongsTo(Sala, {foreignKey: "salaid"});
 Dicta.belongsTo(Disciplina, {foreignKey: "nombredisciplina"});
+Dicta.belongsTo(Sala, {foreignKey: 'salaid'});
+Sala.hasMany(Dicta, {foreignKey: 'salaid'});
 
 //Asiste
 User.belongsToMany(Dicta, {foreignKey:'emailcliente', otherKey: 'dictaid', through:'asiste', as: 'disciplinasAsistidas'});

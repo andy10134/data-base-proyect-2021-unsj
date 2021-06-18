@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+ 
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Registrar Institución</title>
+    <link href="{{ url_for('static', filename='home/img/favicon.ico') }}" rel="icon">
+	<link href="{{ url_for('static', filename='home/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
+    <link href="{{ url_for('static', filename='vendor/fonts/circular-std/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='libs/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fonts/fontawesome/css/fontawesome-all.css') }}">
+    <style>
+    html,
+    body {
+        height: 100%;
+    }
+
+    body {
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(45deg, rgba(11, 0, 80, 0.9) 0%, rgba(4, 210, 115, 0.9) 100%), url("{{ url_for('static', filename='images/hero-bg.jpg') }}") center center no-repeat;
+        background-size: cover;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+    </style>
+</head>
+<!-- ============================================================== -->
+<!-- signup form  -->
+<!-- ============================================================== -->
+
+<body>
+    <!-- ============================================================== -->
+    <!-- signup form  -->
+    <!-- ============================================================== -->
+    <form class="splash-container">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-1">Registro de Institución</h3>
+                <p>Por favor ingrese los datos de su cuenta.</p>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <input class="form-control form-control-lg" type="text" name="nameInst" required="" placeholder="Nombre de la Institución" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <input class="form-control form-control-lg" type="text" name="adress" required="" placeholder="Dirección" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <input class="form-control form-control-lg" type="number" name="phoneInst" required="" placeholder="Teléfono" autocomplete="off">
+                </div>
+                <div class="form-group pt-2">
+                    <button class="btn btn-block btn-primary" type="submit">Registrar mi Institución</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
+    <div id="preloader"></div>
+</body>
+
+ 
+</html>

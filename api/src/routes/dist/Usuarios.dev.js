@@ -30,5 +30,14 @@ router.post("/register", [(0, _expressValidator.check)('nombredeusuario').not().
 })], // agregar mas checks xd
 _Usuario.createUsuarios);
 router.get('/:email/inscriptions', (0, _expressValidator.check)('email', 'Email is required').not().isEmpty().isEmail(), _Usuario.viewInscripciones);
+router.post('/update/password', [(0, _expressValidator.check)('email').isEmail().not().isEmpty().isLength({
+  min: 3
+}), (0, _expressValidator.check)('contraseña', 'Password should be between 5 to 8 characters long').not().isEmpty().isLength({
+  min: 5,
+  max: 10
+}), (0, _expressValidator.check)('nuevacontraseña', 'Password should be between 5 to 8 characters long').not().isEmpty().isLength({
+  min: 5,
+  max: 20
+})], authorize, _Usuario.updatePassword);
 var _default = router;
 exports["default"] = _default;

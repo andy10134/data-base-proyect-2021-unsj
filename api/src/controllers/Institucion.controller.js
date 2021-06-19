@@ -54,7 +54,7 @@ export async function viewInstituciones(req, res) {
     });*/
 }
 
-export function viewInstitucionesDisciplinas(req, res) {
+export function viewInstitucionDisciplinas(req, res) {
     const token = req.headers.authorization.split(" ")[1];
     const user = jwt.decode(token);
 
@@ -92,7 +92,7 @@ export function viewInstitucionesDisciplinas(req, res) {
 
 }
 
-export async function viewInstitucionesClientes(req, res) {
+export async function viewInstitucionClientes(req, res) {
     const token = req.headers.authorization.split(" ")[1];
     const user = jwt.decode(token);
 
@@ -208,7 +208,7 @@ export async function viewInstitucionDisciplinaCupo(req, res) {
     }
 }
 
-export async function viewInstitucionesEntrenadores(req, res) {
+export async function viewInstitucionEntrenadores(req, res) {
     const token = req.headers.authorization.split(" ")[1];
     const user = jwt.decode(token);
 
@@ -244,5 +244,42 @@ export async function viewInstitucionesEntrenadores(req, res) {
             });
         });
 
+    }
+}
+
+export async function updateInstitucionDisciplina(req, res) {
+    const token = req.headers.authorization.split(" ")[1];
+    const user = jwt.decode(token);
+
+    if (user.codinst == null && user.tipousuario != 'Administrador') {
+        res.status(401).json({
+            msg: 'Unauthorized'
+        });
+    } else {
+        InstitucionDisciplina.findOne({
+            where: {
+                nombredisciplina : req.params.nombredisciplina,
+                codinst : user.codinst
+            }
+        }).then(institucion => {
+            institucion.descripcion = !req.body.descripcion ? institucion.descripcion : req.body.descripcion ; 
+            institucion.precioclase = !req.body.precioclase ? institucion.precioclase : req.body.precioclase ; 
+            institucion.save().then(response => {
+                res.status(200).json({
+                    data: response,
+                    msg: 'Disciplina updated'
+                });
+            }).catch(error => {
+                res.status(500).json({
+                    msg: 'Something goes wrong here',
+                    error: error
+                });
+            });
+        }).catch(error => {
+            res.status(500).json({
+                msg: 'Something goes wrong here',
+                error: error
+            });
+        });
     }
 }

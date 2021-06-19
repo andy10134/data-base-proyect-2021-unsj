@@ -70,7 +70,7 @@
 								<a class="nav-link" href="/asistencias" ><i class="fa fa-fw fa-calendar"></i>Asistencias</a>
 	                        </li>
 							<li class="nav-item">
-								<a class="nav-link" href="/inscripciones" ><i class="fa fa-fw fa-check"></i>Inscripciones Abonadas</a>
+								<a class="nav-link" href="/cupo" ><i class="fa fa-fw fa-check"></i>Cupo de una clase</a>
 	                        </li>
 							<li class="nav-item">
 								<a class="nav-link active" href="#" ><i class="fa fa-fw fa-clock"></i>Disciplinas, Entrenadores y Horarios</a>
@@ -190,6 +190,44 @@
 	                        </div>
 
 	                    </div>
+
+						<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="card">
+                                <h3 class="card-header">Consultar cupo de una clase</h3>
+                                <div class="card-body">
+                                    <form action="/disciplinas-entrenadores-horarios" method="POST">
+                                        <div class="form-row">
+                                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                                <label for="validationCustom03">Disciplina</label>
+                                                <input type="text" class="form-control" name="disciplina" id="disciplina" placeholder="Disciplina" required>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                                <label for="validationCustom04">Sala</label>
+                                                <input type="number" class="form-control" name="sala"id="sala" placeholder="Sala" required>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                                <label for="validationCustom05">Inicio</label>
+                                                <input type="time" class="form-control" name="inicio" id="inicio" placeholder="Inicio" required>
+                                            </div>
+											<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                                <label for="validationCustom05">Fin</label>
+                                                <input type="time" class="form-control" name="fin" id="fin" placeholder="Fin" required>
+                                            </div>
+											<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                                <label for="validationCustom05">Fecha</label>
+                                                <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" name="fecha"/>
+														<div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+															<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
+														</div>
+                                            </div>
+                                            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 mb-2">
+                                                <button class="btn btn-primary" type="submit">Ir</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
 	                    
 	                    <div class="row">
 	                        <!-- ============================================================== -->

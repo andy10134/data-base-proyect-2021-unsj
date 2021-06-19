@@ -27,14 +27,33 @@ def listarAsitencias():
     r = requests.get('/asistencias')
     return render_template('asistencias.html', asistencias = data['data'], sesion = session)
 
-@app.route('/inscripciones', methods=["GET", "POST"])
-def listarInscripciones():
+@app.route('/cupo', methods=["GET", "POST"])
+def mostrarCupo():
     r = requests.get()
-    return render_template('inscripciones.html', inscripciones = data['data'], sesion = session)
+    return render_template('cupo.html', cupo = data['data'], sesion = session)
 
 @app.route('/disciplinas-entrenadores-horarios', methods=["GET", "POST"])
 def listarDEH():
     return render_template('disciplinas-entrenadores-horarios.html', deh = data['data'], sesion = session)
+
+@app.route('/disciplinas-entrenadores-horarios', methods=["POST"])
+def handledata4():
+    if request.method == 'POST' :
+        if(request.form['disciplina'] and request.form['sala'] and request.form['inicio'] and request.form['fin'] and request.form['fecha']):
+            try:
+                #r = el get va aca
+                r.raise_for_status()
+            except requests.exceptions.RequestException: 
+                flash('Verifica que todos los campos esten completos')
+                return redirect(url_for('listarDEH')) 
+            else:
+                #calcular todo lo de cupo
+                return redirect(url_for('mostrarcupo'))
+        else:
+            flash('Verifica que todos los campos esten completos')
+            return redirect(url_for('listarDEH'))
+    else:
+        return redirect(url_for('listarDEH'))
 
 @app.route('/registrarse')
 def registrar():
@@ -52,15 +71,15 @@ def handledata2():
                 r.raise_for_status()
             except requests.exceptions.RequestException: 
                 flash('Verifica que todos los campos esten completos')
-                return redirect(url_for('ingresar')) 
+                return redirect(url_for('registrar')) 
             else:
                 #aca guardar todo lo de sesion del usuario y token
                 return redirect(url_for('registrarInst'))
         else:
             flash('Verifica que todos los campos esten completos')
-            return redirect(url_for('ingresar'))
+            return redirect(url_for('registrar'))
     else:
-        return redirect(url_for('ingresar'))
+        return redirect(url_for('registrar'))
 
 @app.route('/registrarIns')
 def registrarInst():

@@ -108,15 +108,16 @@ def handledata():
                 flash('Verifica tus credenciales de acceso, DNI o contraseña inválidos')
                 return redirect(url_for('ingresar')) 
             else:
+                datos = r.json(())
                 session['email'] = request.form['email']
                 session['password'] = request.form['password']
-                session['nomInst'] = r['']
-                session['adress'] = r['']
-                session['phone'] = r['']
-                session['numUsu'] = r['']
-                session['numEntr'] = r['']
-                session['numDisc'] = r['']
-                session['token'] = = r['']
+                session['nomInst'] = datos['data']['nombre']
+                session['adress'] = datos['data']['direccion']
+                session['phone'] = datos['data']['telefono']
+                session['numUsu'] = datos['data']['clientes']
+                session['numEntr'] = datos['data']['entrenadores']
+                session['numDisc'] = datos['data']['disciplinas']
+                session['token'] = datos['token']
                 return redirect(url_for('index'))
         else:
             flash('Verifica tus credenciales de acceso, DNI o contraseña inválidos')

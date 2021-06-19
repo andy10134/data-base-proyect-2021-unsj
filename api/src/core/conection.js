@@ -7,7 +7,7 @@ const { Sequelize } = require('sequelize');
 export const sequelize = new Sequelize(
   'golive_db',          // db name
   'postgres',           // username
-  'pass',               // pass
+  'Alanorma1',               // pass
   {
     host: 'localhost',
     dialect:'postgres',
@@ -18,6 +18,9 @@ export const sequelize = new Sequelize(
       require: 30000,
       idle: 10000
     },
-    loggin: false
+    loggin: false,
+    define: {
+      timestamps: false
+    }
   }
 );

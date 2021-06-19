@@ -41,6 +41,7 @@ export function loginUsuarios(req, res) {
         return res.status(400).json({ errors: errors.array() });
     } else {
         let getUser;
+        
         User.findByPk(req.body.email).then(user => {
             if (!user) {
                 return res.status(401).json({
@@ -52,7 +53,7 @@ export function loginUsuarios(req, res) {
         }).then(response => {
             if (!response) {
                 return res.status(401).json({
-                    message: "Authentication failed1"
+                    message: "Authentication failed"
                 });
             }
             let jwtToken = jwt.sign({
@@ -140,7 +141,6 @@ export function createUsuarios(req, res) {
 
         console.log(req.body);
         bcrypt.hash(req.body.contraseña, 10, (err, hash) => {
-            console.log(hash);
             User.create({
                 email: req.body.email,
                 nombre: req.body.nombre,
@@ -204,5 +204,57 @@ export async function viewInscripciones(req, res) {
             }
         }).catch();
 
+    }
+}
+
+export async function updatePassword(req, res) {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        res.status(422).jsonp(errors.array());
+    }
+    else {
+        let user;
+        User.findByPk(req.body.email, {
+            attributes: ["email"]
+        }).then(email => {
+            if (!email) {
+                res.status(404).json({
+                    mgs: 'Invalid email'
+                });
+            } else {
+                User.findByPk(req.body.email).then(userPassword => {
+                    user = userPassword;
+                    return bcrypt.compare(req.body.contraseña, user.contraseña);
+                }).then(response => {
+                    if (!response) {
+                        return res.status(401).json({
+                            message: "Passwords doens't match"
+                        });
+                    }
+                    bcrypt.hash(req.body.nuevacontraseña, 10, (err, hash) => {
+                        user.contraseña = hash
+                        user.save().then(response => {
+                            res.status(200).json({
+                                data: response,
+                                msg: 'Password has been updated'
+                            });
+                        }).catch(err => {
+                            res.status(500).json({
+                                error: err
+                            });
+                        });
+                    });
+                }).catch(err => {
+                    res.status(500).json({
+                        error: 2
+                    });
+                });
+            }
+        }).catch(err => {
+            res.status(500).json({
+                error: 3
+            });
+        })
     }
 }

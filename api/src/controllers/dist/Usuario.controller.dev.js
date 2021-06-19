@@ -7,6 +7,7 @@ exports.viewUsuarios = viewUsuarios;
 exports.loginUsuarios = loginUsuarios;
 exports.createUsuarios = createUsuarios;
 exports.viewInscripciones = viewInscripciones;
+exports.updatePassword = updatePassword;
 
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 
@@ -91,7 +92,7 @@ function loginUsuarios(req, res) {
     }).then(function (response) {
       if (!response) {
         return res.status(401).json({
-          message: "Authentication failed1"
+          message: "Authentication failed"
         });
       }
 
@@ -150,8 +151,6 @@ function createUsuarios(req, res) {
   } else {
     console.log(req.body);
     bcrypt.hash(req.body.contraseña, 10, function (err, hash) {
-      console.log(hash);
-
       _Usuario["default"].create({
         email: req.body.email,
         nombre: req.body.nombre,
@@ -220,6 +219,69 @@ function viewInscripciones(req, res) {
         case 2:
         case "end":
           return _context2.stop();
+      }
+    }
+  });
+}
+
+function updatePassword(req, res) {
+  var errors, user;
+  return regeneratorRuntime.async(function updatePassword$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          errors = validationResult(req);
+
+          if (!errors.isEmpty()) {
+            res.status(422).jsonp(errors.array());
+          } else {
+            _Usuario["default"].findByPk(req.body.email, {
+              attributes: ["email"]
+            }).then(function (email) {
+              if (!email) {
+                res.status(404).json({
+                  mgs: 'Invalid email'
+                });
+              } else {
+                _Usuario["default"].findByPk(req.body.email).then(function (userPassword) {
+                  user = userPassword;
+                  return bcrypt.compare(req.body.contraseña, user.contraseña);
+                }).then(function (response) {
+                  if (!response) {
+                    return res.status(401).json({
+                      message: "Passwords doens't match"
+                    });
+                  }
+
+                  bcrypt.hash(req.body.nuevacontraseña, 10, function (err, hash) {
+                    user.contraseña = hash;
+                    user.save().then(function (response) {
+                      res.status(200).json({
+                        data: response,
+                        msg: 'Password has been updated'
+                      });
+                    })["catch"](function (err) {
+                      res.status(500).json({
+                        error: err
+                      });
+                    });
+                  });
+                })["catch"](function (err) {
+                  res.status(500).json({
+                    error: 2
+                  });
+                });
+              }
+            })["catch"](function (err) {
+              res.status(500).json({
+                error: 3
+              });
+            });
+          }
+
+        case 2:
+        case "end":
+          return _context3.stop();
       }
     }
   });

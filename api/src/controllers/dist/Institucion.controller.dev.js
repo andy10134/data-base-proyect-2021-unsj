@@ -4,10 +4,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.viewInstituciones = viewInstituciones;
-exports.viewInstitucionesDisciplinas = viewInstitucionesDisciplinas;
-exports.viewInstitucionesClientes = viewInstitucionesClientes;
+exports.viewInstitucionDisciplinas = viewInstitucionDisciplinas;
+exports.viewInstitucionClientes = viewInstitucionClientes;
 exports.viewInstitucionDisciplinaCupo = viewInstitucionDisciplinaCupo;
-exports.viewInstitucionesEntrenadores = viewInstitucionesEntrenadores;
+exports.viewInstitucionEntrenadores = viewInstitucionEntrenadores;
+exports.updateInstitucionDisciplina = updateInstitucionDisciplina;
 
 var _Disciplina = _interopRequireDefault(require("../models/Disciplina"));
 
@@ -67,7 +68,7 @@ function viewInstituciones(req, res) {
   });
 }
 
-function viewInstitucionesDisciplinas(req, res) {
+function viewInstitucionDisciplinas(req, res) {
   var token = req.headers.authorization.split(" ")[1];
 
   var user = _jsonwebtoken["default"].decode(token);
@@ -104,9 +105,9 @@ function viewInstitucionesDisciplinas(req, res) {
   }
 }
 
-function viewInstitucionesClientes(req, res) {
+function viewInstitucionClientes(req, res) {
   var token, user;
-  return regeneratorRuntime.async(function viewInstitucionesClientes$(_context2) {
+  return regeneratorRuntime.async(function viewInstitucionClientes$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
@@ -209,9 +210,9 @@ function viewInstitucionDisciplinaCupo(req, res) {
   });
 }
 
-function viewInstitucionesEntrenadores(req, res) {
+function viewInstitucionEntrenadores(req, res) {
   var token, user;
-  return regeneratorRuntime.async(function viewInstitucionesEntrenadores$(_context4) {
+  return regeneratorRuntime.async(function viewInstitucionEntrenadores$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
@@ -252,6 +253,55 @@ function viewInstitucionesEntrenadores(req, res) {
         case 3:
         case "end":
           return _context4.stop();
+      }
+    }
+  });
+}
+
+function updateInstitucionDisciplina(req, res) {
+  var token, user;
+  return regeneratorRuntime.async(function updateInstitucionDisciplina$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          token = req.headers.authorization.split(" ")[1];
+          user = _jsonwebtoken["default"].decode(token);
+
+          if (user.codinst == null && user.tipousuario != 'Administrador') {
+            res.status(401).json({
+              msg: 'Unauthorized'
+            });
+          } else {
+            _Institucion_disciplina["default"].findOne({
+              where: {
+                nombredisciplina: req.params.nombredisciplina,
+                codinst: user.codinst
+              }
+            }).then(function (institucion) {
+              institucion.descripcion = !req.body.descripcion ? institucion.descripcion : req.body.descripcion;
+              institucion.precioclase = !req.body.precioclase ? institucion.precioclase : req.body.precioclase;
+              institucion.save().then(function (response) {
+                res.status(200).json({
+                  data: response,
+                  msg: 'Disciplina updated'
+                });
+              })["catch"](function (error) {
+                res.status(500).json({
+                  msg: 'Something goes wrong here',
+                  error: error
+                });
+              });
+            })["catch"](function (error) {
+              res.status(500).json({
+                msg: 'Something goes wrong here',
+                error: error
+              });
+            });
+          }
+
+        case 3:
+        case "end":
+          return _context5.stop();
       }
     }
   });

@@ -44,7 +44,7 @@ router.post("/register",
     createUsuarios
 );
 
-router.get('/:email/inscriptions',
+router.get('/inscriptions/:email',
     check('email', 'Email is required')
         .not()
         .isEmpty()

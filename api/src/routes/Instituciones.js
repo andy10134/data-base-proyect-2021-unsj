@@ -20,7 +20,7 @@ router.get('/', viewInstituciones);
 router.get('/disciplines', authorize, viewInstitucionDisciplinas);
 router.get('/customers', authorize, viewInstitucionClientes);
 router.get('/trainers', authorize, viewInstitucionEntrenadores);
-router.get('/signup', authorize, createInstituciones);
+router.post('/signup', authorize, createInstituciones);
 router.get('/delete', authorize, deleteInstitucion);
 router.post('/delete/discipline/:nombredisciplina',
     [

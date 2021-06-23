@@ -342,3 +342,57 @@ export async function updateInstitucionDisciplina(req, res) {
         });
     }
 }
+
+
+//Necesito la contrasenia y el nombre de la disciplina a eliminar
+export async function deleteInstitucionDisciplina(req, res) {
+    const token = req.headers.authorization.split(" ")[1];
+    const user = jwt.decode(token);
+
+    if (user.codinst == null && user.tipousuario != 'Administrador') {
+        res.status(401).json({
+            msg: 'Unauthorized'
+        });
+    } else {
+        let getUser;
+
+        User.findByPk(user.email).then(user => {
+            if (!user) {
+                return res.status(404).json({
+                    message: "Invalid email"
+                });
+            }
+            getUser = user;
+            return bcrypt.compare(req.body.contraseña, user.contraseña);
+        }).then(response => {
+            if (!response) {
+                return res.status(401).json({
+                    message: "Authentication failed"
+                });
+            }
+            InstitucionDisciplina.findOne({
+                where: {
+                    codinst: getUser.codinst,
+                    nombredisciplina: req.params.nombredisciplina
+                }
+            }).then(institucionDisciplina => {
+                if (!institucionDisciplina) {
+                    return res.status(404).json({
+                        message: "Invalid user"
+                    });
+                }
+                institucionDisciplina.destroy().then(data => {
+                    res.status(200).json({
+                        data: data,
+                        msg: 'Discipline has been deleted'
+                    });
+                });
+            });
+        }).catch(err => {
+            return res.status(500).json({
+                message: "Server error",
+                error: err
+            });
+        });
+    }
+}

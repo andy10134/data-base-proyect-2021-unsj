@@ -20,6 +20,14 @@ router.get('/disciplines', authorize, viewInstitucionDisciplinas);
 router.get('/customers', authorize, viewInstitucionClientes);
 router.get('/trainers', authorize, viewInstitucionEntrenadores);
 router.get('/institutions/signup', authorize, createInstituciones);
+router.post('/delete/discipline/:nombredisciplina',
+    [
+        check('nombredisciplina', 'Nombredisciplina is required')
+            .isAlpha()
+            .not()
+            .isEmpty()
+    ],
+    authorize, deleteInstitucionDisciplina);
 router.get('/availability/:nombredisciplina/:numerosala',
     [
         check('nombredisciplina', 'Nombredisciplina is required')

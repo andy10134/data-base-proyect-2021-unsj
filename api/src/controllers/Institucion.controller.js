@@ -3,6 +3,7 @@ import Institucion from "../models/Institucion";
 import InstitucionDisciplina from "../models/Institucion_disciplina";
 import Dicta from "../models/Dicta";
 import Sala from "../models/Sala";
+import User from "../models/Usuario";
 
 import {
     validationResult
@@ -10,6 +11,10 @@ import {
 import Inscripcion from "../models/Inscripcion";
 import jwt from "jsonwebtoken";
 import sequelize from "../db/db";
+
+
+const bcrypt = require("bcrypt");
+
 
 
 //for the query https://stackoverflow.com/questions/61257195/sequelize-associations-between-two-tables
@@ -21,50 +26,53 @@ export async function createInstituciones(req, res) {
 
     if (!errors.isEmpty()) {
         res.status(422).jsonp(errors.array());
-    } else if (!user.codinst && user.tipousuario != 'Administrador') {
+    } else if (user.tipousuario != 'Usuario') {
         res.status(401).json({
             msg: 'Unauthorized'
         });
     } else {
         Institucion.create({
-            codinst: req.body.codinst,
             nombre: req.body.nombre,
             direccion: req.body.direccion,
             telefono: req.body.telefono
         }).then(institucion => {
-            User.findByPk(user.email).then((usuario) => {
-                usuario.tipousuario = "Administrador";
-                usuario.codisnt = institucion.codinst
-
-                usuario.save().then(response => {
-                    let jwtToken = jwt.sign({
-                        email: response.email,
-                        tipousuario: response.tipousuario,
-                        nombredeusuario: response.nombredeusuario,
-                        codinst: response.codinst
-                    }, "longer-secret-is-better", {
-                        expiresIn: "1h"
+                const codinstc = institucion.codinst;
+                User.findByPk(user.email).then((usuario) => {
+                    usuario.codisnt = codinstc.toString();
+                    usuario.tipousuario = "Administrador";
+    
+                    usuario.save().then(response => {
+                        let jwtToken = jwt.sign({
+                            email: response.email,
+                            tipousuario: response.tipousuario,
+                            nombredeusuario: response.nombredeusuario,
+                            codinst: response.codinst
+                        }, "longer-secret-is-better", {
+                            expiresIn: "1h"
+                        });
+    
+                        res.status(200).json({
+                            token: jwtToken,
+                            expiresIn: 3600,
+                            msg: response
+                        });
+    
+                    }).catch(err => {
+                        res.status(500).json({
+                            error: err,
+                            msg:"Error al actualizar"
+                        });
                     });
-
-                    res.status(200).json({
-                        token: jwtToken,
-                        expiresIn: 3600,
-                        msg: response
-                    });
-
-                }).catch(err => {
+                }).catch(error => {
                     res.status(500).json({
-                        error: error
+                        error: error,
+                        msg:"Error usuario"
                     });
                 });
-            }).catch(error => {
-                res.status(500).json({
-                    error: error
-                });
-            });
         }).catch(err => {
             res.status(500).json({
-                error: err
+                error: err,
+                msg:"Error Institucion"
             });
         });
     }
@@ -269,6 +277,55 @@ export async function viewInstitucionDisciplinaCupo(req, res) {
     }
 }
 
+
+export async function viewInscripcionesUsuario(req, res) {
+    const token = req.headers.authorization.split(" ")[1];
+    const user = jwt.decode(token);
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        res.status(422).jsonp(errors.array());
+    } else {
+        // Inscripcion.findAll({
+        //     where: {
+        //         email: req.param.email
+        //     },
+        //     include: {
+        //         model: InstitucionDisciplina,
+        //         include:{
+        //             model: Institucion,
+        //             include:{
+        //                 model:Sala
+        //             }
+        //         }
+        //     }
+        InstitucionDisciplina.findAll({
+                where: {
+                    codinst: user.codinst
+                },
+                include:{
+                    model:Inscripcion,
+                    where:{
+                        email:  req.params.email
+                    }
+                }
+        }).then(inscripcion => {
+
+            if (!inscripcion) {
+                res.status(404).json({
+                    mgs: 'Invalid codinst'
+                });
+            } else {
+                res.status(200).json({
+                    data: inscripcion
+                });
+            }
+        }).catch();
+
+    }
+}
+
+
 export async function viewInstitucionEntrenadores(req, res) {
     const token = req.headers.authorization.split(" ")[1];
     const user = jwt.decode(token);
@@ -355,14 +412,14 @@ export async function deleteInstitucionDisciplina(req, res) {
     } else {
         let getUser;
 
-        User.findByPk(user.email).then(user => {
-            if (!user) {
+        User.findByPk(user.email).then(userdb => {
+            if (!userdb) {
                 return res.status(404).json({
                     message: "Invalid email"
                 });
             }
-            getUser = user;
-            return bcrypt.compare(req.body.contraseña, user.contraseña);
+            getUser = userdb;
+            return bcrypt.compare(req.body.contraseña, getUser.contraseña);
         }).then(response => {
             if (!response) {
                 return res.status(401).json({

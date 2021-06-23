@@ -24,7 +24,6 @@ const Institucion = sequelize.define('instituciones',{
 },
 {
     timestamps:false,
-    initialAutoIncrement: 3
 });
 
 export default Institucion;

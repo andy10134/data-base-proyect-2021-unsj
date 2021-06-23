@@ -4,7 +4,7 @@ const { Sequelize } = require('sequelize');
 const sequelize = new Sequelize(
     "golive_db",
     "postgres",
-    "password", {
+    "Ani.C.69", {
         host: "localhost",
         dialect: "postgres",
         define: {

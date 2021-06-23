@@ -3,21 +3,23 @@ from flask import Flask,render_template, request, flash, redirect, url_for, sess
 import json
 import requests
 
+
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "GDtfDCFYjD"
 
 @app.route('/', methods=["GET", "POST"])
 def index():
     if 'email' in session:
         headersAPI = {'Authorization': 'Bearer '+session['token']}
-        r = requests.get('localhost:400/api/institutions/disciplines', headers=headersAPI)
+        r = requests.get('http://localhost:4000/api/institutions/disciplines', headers=headersAPI)
         if r.status_code == 401:
             try:
                 params = {'email' : session['email'], 'password' : session['password']}
-                r = requests.post("localhost:400/api/users/login", json=params)
+                r = requests.post("http://localhost:4000/api/users/login", json=params)
                 r.raise_for_status()
             except requests.exceptions.RequestException: 
                 flash('Ocurrio un error en la conexión')
-                session.delete()
+                session.clear()
                 return render_template('home.html')
             else:
                 datos = r.json()
@@ -38,15 +40,15 @@ def index():
 def listarUsuarios():
     if 'email' in session:
         headersAPI = {'Authorization': 'Bearer '+session['token']}
-        r = requests.get('localhost:400/api/institutions/customers', headers=headersAPI)
+        r = requests.get('http://localhost:4000/api/institutions/customers', headers=headersAPI)
         if r.status_code == 401:
             try:
                 params = {'email' : session['email'], 'password' : session['password']}
-                r = requests.post("localhost:400/api/users/login", json=params)
+                r = requests.post("http://localhost:4000/api/users/login", json=params)
                 r.raise_for_status()
             except requests.exceptions.RequestException: 
                 flash('Ocurrio un error en la conexión')
-                session.delete()
+                session.clear()
                 return render_template('home.html')
             else:
                 datos = r.json()
@@ -55,7 +57,7 @@ def listarUsuarios():
         else:
             if (r.status_code == 200):
                 data = r.json() #ver el json del andy
-                return render_template('disc-usuarios.html', usuarios = data['data'], sesion = session)
+                return render_template('disc-usuarios.html', Disciplinas = data['data'], sesion = session)
             else:
                 flash('Ocurrio un error en la conexión')
                 return render_template('home.html')
@@ -68,17 +70,17 @@ def listarAsitencias():
     if 'email' in session:
         if request.method == 'POST' :
             if request.form['email'] :
-                url = "localhost:400/api/users/inscriptions/" + str(request.form['email'])
+                url = "http://localhost:4000/api/users/inscriptions/" + str(request.form['email'])
                 headersAPI = {'Authorization': 'Bearer '+session['token']}
                 r = requests.get(url, headers=headersAPI)
                 if r.status_code == 401:
                     try:
                         params = {'email' : session['email'], 'password' : session['password']}
-                        r = requests.post("localhost:400/api/users/login", json=params)
+                        r = requests.post("http://localhost:4000/api/users/login", json=params)
                         r.raise_for_status()
                     except requests.exceptions.RequestException: 
                         flash('Ocurrio un error en la conexión')
-                        session.delete()
+                        session.clear()
                         return render_template('home.html')
                     else:
                             datos = r.json()
@@ -102,26 +104,31 @@ def listarAsitencias():
 
 @app.route('/cupo/<datos>', methods=["GET", "POST"])
 def mostrarCupo(datos):
-
+    
     if 'email' in session:
-        return render_template('cupo.html', cupo = datos, sesion = session)
+        d={}
+        dato=datos.replace("{", "").replace("}", "").replace("'", "").replace(" ","").split(",")
+        for linea in dato:
+            a,b = linea.split(":",1)
+            d[a] = b
+        return render_template('cupo.html', cupo=d, sesion = session)
     else:
         return render_template('home.html')
 
 
-@app.route('/disciplinas-entrenadores-horarios', methods=["GET", "POST"])
+@app.route('/disciplinas-entrenadores-horarios', methods=["GET"])
 def listarDEH():
     if 'email' in session:
         headersAPI = {'Authorization': 'Bearer '+session['token']}
-        r = requests.get('localhost:400/api/institutions/trainners', headers=headersAPI)
+        r = requests.get('http://localhost:4000/api/institutions/trainers', headers=headersAPI)
         if r.status_code == 401:
             try:
                 params = {'email' : session['email'], 'password' : session['password']}
-                r = requests.post("localhost:400/api/users/login", json=params)
+                r = requests.post("http://localhost:4000/api/users/login", json=params)
                 r.raise_for_status()
             except requests.exceptions.RequestException: 
                 flash('Ocurrio un error en la conexión')
-                session.delete()
+                session.clear()
                 return render_template('home.html')
             else:
                 datos = r.json()
@@ -141,18 +148,22 @@ def listarDEH():
 @app.route('/disciplinas-entrenadores-horarios', methods=["POST"])
 def handledata4():
     if request.method == 'POST' :
-        if(request.form['email'] and request.form['disciplina'] and request.form['sala'] and request.form['inicio'] and request.form['fin'] and request.form['fecha']):
-            url= 'localhost:400/api/institutions/' + str(request.form['disciplina']) + '/' + str(request.form['sala'])
+        if(request.form['entrenador'] and request.form['disciplina'] and request.form['sala'] and request.form['inicio'] and request.form['fin'] and request.form['fecha']):
+            params ={'fecha' : request.form['fecha'],
+            'inicio' : request.form['inicio'],
+            'fin' : request.form['fin']
+            }
+            url= 'http://localhost:4000/api/institutions/availability/' + str(request.form['disciplina']) + '/' + str(request.form['sala'])
             headersAPI = {'Authorization': 'Bearer '+session['token']}
-            r = requests.get(url, headers=headersAPI)
+            r = requests.get(url, headers=headersAPI, json=params)
             if r.status_code == 401:
                 try:
                     params = {'email' : session['email'], 'password' : session['password']}
-                    r = requests.post("localhost:400/api/users/login", json=params)
+                    r = requests.post("http://localhost:4000/api/users/login", json=params)
                     r.raise_for_status()
                 except requests.exceptions.RequestException: 
                     flash('Ocurrio un error en la conexión')
-                    session.delete()
+                    session.clear()
                     return render_template('home.html')
                 else:
                     datos = r.json()
@@ -160,18 +171,18 @@ def handledata4():
                     return redirect(url_for('listarDEH'))
             else:
                 if (r.status_code == 200):
-                    data = r.json() #ver el json del andy
+                    data = r.json()
                     #calcular todo lo de cupo
                     dat={
-                        'email' : request.form['email'],
-                        'disciplina' : request.form['disciplina'],
-                        'sala' : request.form['sala'],
-                        'inicio' : request.form['inicio'],
-                        'fin' : request.form['fin'],
-                        'fecha' : request.form['fecha'],
-                        'cupo' : data['cupo'] # modificar con respecto a lo q se devuelva
+                        "email" : request.form['entrenador'],
+                        "disciplina" : request.form['disciplina'],
+                        "sala" : request.form['sala'],
+                        "inicio" : request.form['inicio'],
+                        "fin" : request.form['fin'],
+                        "fecha" : request.form['fecha'],
+                        "cupo" : data['data']['cupo']
                     }
-                    return redirect(url_for('mostrarcupo',datos=dat))
+                    return redirect(url_for('mostrarCupo',datos=dat))
                 else:
                     flash('Verifica que todos los datos sean correctos')
                     return redirect(url_for('listarDEH')) 
@@ -184,30 +195,33 @@ def handledata4():
 @app.route('/registrarse')
 def registrar():
     if not ('email' in session):
-        return render_template('sing-up.html')
+        return render_template('sign-up.html')
     else:
         return redirect(url_for('index'))
 
 @app.route('/registrarse', methods = ['POST'])
 def handledata2():
     if request.method == 'POST' :
-        if(request.form['name'] and request.form['lastname'] and request.form['nick'] and request.form['date'] and request.form['phone'] and request.form['email'] and request.form['password']):
+        if(request.form['genero'] and request.form['name'] and request.form['lastname'] and request.form['nick'] and request.form['date'] and request.form['phone'] and request.form['email'] and request.form['password']):
             try:
                 params = {'email' : request.form['email'], 
-                'password' : request.form['password'], 
-                'name' : request.form['name'], 
-                'lastname' : request.form['lastname'],
-                'date' : request.form['date'],
-                'phone' : request.form['phone'],
-                'nick' : request.form['nick']
+                'contraseña' : request.form['password'], 
+                'nombre' : request.form['name'], 
+                'apellido' : request.form['lastname'],
+                'fechanacimiento' : request.form['date'],
+                'numerotelefono' : request.form['phone'],
+                'nombredeusuario' : request.form['nick'],
+                'nombregenero' : request.form['genero']
                 }
-                r = requests.post("", json=params)
+                r = requests.post("http://localhost:4000/api/users/register/", json=params)
+                print(r.status_code)
                 r.raise_for_status()
-            except requests.exceptions.RequestException: 
+            except requests.exceptions.RequestException:
                 flash('Verifica que todos los campos esten completos')
-                return redirect(url_for('registrar')) 
+                return redirect(url_for('registrar'))
             else:
-                #aca guardar todo lo de sesion del usuario
+                session['email'] = request.form['email']
+                session['password'] = request.form['password']
                 return redirect(url_for('registrarInst'))
         else:
             flash('Verifica que todos los campos esten completos')
@@ -217,7 +231,7 @@ def handledata2():
 
 @app.route('/registrarIns')
 def registrarInst():
-    if not ('email' in session):
+    if ('email' in session):
         return render_template('registrarInst.html')
     else:
         return redirect(url_for('index'))
@@ -237,7 +251,7 @@ def handledata3():
                 flash('Verifica que todos los campos esten completos y los datos sean correctos')
                 return redirect(url_for('ingresar')) 
             else:
-                #aca guardar todo lo de sesion de la institucion y token
+                #session inst y token
                 return redirect(url_for('index'))
         else:
             flash('Verifica que todos los campos esten completos y los datos sean correctos')
@@ -258,14 +272,16 @@ def handledata():
         if(request.form['email'] and request.form['password']):
             
             try:
-                params = {'email' : request.form['email'], 'password' : request.form['password']}
-                r = requests.post("localhost:400/api/users/login", json=params)
+                params = {'email' : request.form['email'], 'contraseña' : request.form['password']}
+                r = requests.post("http://localhost:4000/api/users/login", json=params)
+                print(r)
                 r.raise_for_status()
             except requests.exceptions.RequestException: 
                 flash('Verifica tus credenciales de acceso, DNI o contraseña inválidos')
                 return redirect(url_for('ingresar')) 
             else:
                 datos = r.json()
+                print(datos)
                 session['email'] = request.form['email']
                 session['password'] = request.form['password']
                 session['nomInst'] = datos['data']['nombre']
@@ -298,7 +314,7 @@ def handledata5():
             try:
                 headersAPI = {'Authorization': 'Bearer '+session['token']}
                 params = {'email' : session['email'], 'contraseña' : request.form['contraseñavieja'], 'nuevacontraseña' : request.form['contraseñaactual']}
-                r = requests.post("localhost:400/api/users/update/password", json=params, headers=headersAPI)
+                r = requests.post("http://localhost:4000/api/users/update/password", json=params, headers=headersAPI)
                 r.raise_for_status()
             except requests.exceptions.RequestException: 
                 flash('Verifica los datos ingresados, contraseña inválida')
@@ -329,7 +345,7 @@ def handledata7(nombre):
             
             try:
                 params = {'precioclase' : session['precio'], 'descripcion' : request.form['descripcion']}
-                url= 'localhost:400/api/institutions/' + str(nombre)
+                url= 'http://localhost:4000/api/institutions/' + str(nombre)
                 headersAPI = {'Authorization': 'Bearer '+session['token']}
                 r = requests.post(url, json=params, headers=headersAPI)
                 r.raise_for_status()
@@ -392,7 +408,7 @@ def handledata8():
                 flash('Error al procesar la solicitud')
                 return redirect(url_for('eliminarInst')) 
             else:
-                session.delete()
+                session.clear()
                 return redirect(url_for('index'))
         else:
             flash('Verifica los datos ingresados, contraseña inválida')
@@ -405,7 +421,7 @@ def salir():
     if not ('email' in session):
         return render_template('home.html')
     else:
-        session.delete()
+        session.clear()
         return redirect(url_for('index'))
 
 if __name__ == '__main__': 

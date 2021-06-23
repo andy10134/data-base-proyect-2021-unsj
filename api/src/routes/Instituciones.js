@@ -17,7 +17,7 @@ router.get('/', viewInstituciones);
 
 router.get('/disciplines', authorize, viewInstitucionDisciplinas);
 router.get('/customers', authorize, viewInstitucionClientes);
-router.get('/trainners', authorize, viewInstitucionEntrenadores);
+router.get('/trainers', authorize, viewInstitucionEntrenadores);
 router.get('/availability/:nombredisciplina/:numerosala',
     [
         check('nombredisciplina', 'Nombredisciplina is required')

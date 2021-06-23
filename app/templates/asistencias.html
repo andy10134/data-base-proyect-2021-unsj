@@ -83,9 +83,6 @@
                                 </div>
                             </li>
 							<li class="nav-item">
-								<a class="nav-link" href="/cupo" ><i class="fa fa-fw fa-check"></i>Cupo de una clase</a>
-	                        </li>
-							<li class="nav-item">
 								<a class="nav-link" href="/disciplinas-entrenadores-horarios" ><i class="fa fa-fw fa-clock"></i>Disciplinas, Entrenadores y Horarios</a>
 	                        </li>
 	                    </ul>
@@ -142,8 +139,8 @@
 
 	                                                <div class="user-avatar-address">
 	                                                    <p class="border-bottom pb-3">
-	                                                        <span class="d-xl-inline-block d-block mb-2"><i class="fa fa-map-marker-alt mr-2 text-primary "></i>{{sesion['adress']}</span>
-	                                                        <span class="d-xl-inline-block d-block mb-2"><i class="fa fa-phone ml-2 mr-2 text-primary" ></i>{{sesion['phone']}</span>
+	                                                        <span class="d-xl-inline-block d-block mb-2"><i class="fa fa-map-marker-alt mr-2 text-primary "></i>{{sesion['adress']}}</span>
+	                                                        <span class="d-xl-inline-block d-block mb-2"><i class="fa fa-phone ml-2 mr-2 text-primary" ></i>{{sesion['phone']}}</span>
 	                                                    </p>
 	                                                    <div class="mt-3">
 	                                                        <a href="#" class="badge badge-light mr-1">Gym</a> <a href="#" class="badge badge-light mr-1">Fitness</a> <a href="#" class="badge badge-light mr-1">Life Style</a> 
@@ -218,14 +215,20 @@
 													<thead>
 														<tr>
 															<th>Email del cliente</th>
-															<th>Fecha</th>
+															<th>Nombre disciplina</th>
+															<th>Cantidad de clases</th>
+															<th>Fecha de pago</th>
+															<th>Fecha de expiraciónn</th>
 														</tr>
 													</thead>
 													<tbody>
 														{% for asistencia in asistencias %}
 														<tr>
-															<td>{{asistencia['id']}}</td>  <!-- cambiar a valores reales -->
-															<td>{{asistencia['email']}}</td>
+															<td>{{asistencia['email']}}</td>  <!-- cambiar a valores reales -->
+															<td>{{asistencia['institucion_disciplina']['nombredisciplina']}}</td>
+															<td>{{asistencia['cantclases']}}</td>
+															<td>{{asistencia['fechapago']}}</td>
+															<td>{{asistencia['diaexpiracion']}}</td>
 														</tr>
 														{% endfor %}
 												</table>

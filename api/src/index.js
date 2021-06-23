@@ -12,7 +12,7 @@ async function main(){
         console.log(`La app ha arrancado en`);
     
         // Conectase a la base de datos
-        // Force true: DROP TABLES
+        // Force true: DROP TABLES-
         sequelize.sync({ force: false }).then(() => {
             console.log("Nos hemos conectado a la base de datos");
         }).catch(error => {

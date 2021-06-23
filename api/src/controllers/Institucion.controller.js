@@ -63,14 +63,17 @@ export function viewInstitucionDisciplinas(req, res) {
             msg: 'Unauthorized'
         });
     } else {
-        Institucion.findByPk(user.codinst, {
-            include: {
+        InstitucionDisciplina.findAll({
+            where:{
+                codinst : user.codinst
+            }
+            /*include: {
                 model: Disciplina,
                 attributes: ['nombredisciplina'],
                 through: {
                     attributes: []
                 }
-            }
+            }*/
         }).then(institucion => {
             if (!institucion) {
                 res.status(404).json({

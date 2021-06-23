@@ -83,9 +83,6 @@
                                 </div>
                             </li>
 							<li class="nav-item">
-								<a class="nav-link" href="/cupo" ><i class="fa fa-fw fa-check"></i>Cupo de una clase</a>
-	                        </li>
-							<li class="nav-item">
 								<a class="nav-link" href="/disciplinas-entrenadores-horarios" ><i class="fa fa-fw fa-clock"></i>Disciplinas, Entrenadores y Horarios</a>
 	                        </li>
 	                    </ul>
@@ -220,17 +217,15 @@
 															<th>Nombre</th>
 															<th>Descripción</th>
 															<th>Precio de clase</th>
-															<th>Numero de la sala</th>
 															<th>Más</th>
 														</tr>
 													</thead>
 													<tbody>
 														{% for disciplina in disciplinas %}
 														<tr>
-															<td>{{disciplina['nombre']}}</td>  <!-- cambiar a valores reales -->
+															<td>{{disciplina['nombredisciplina']}}</td>  <!-- cambiar a valores reales -->
 															<td>{{disciplina['descripcion']}}</td>
-															<td>{{disciplina['precio']}}</td>
-															<td>{{disciplina['sala']}}</td>
+															<td>{{disciplina['precioclase']}}</td>
 															<td>
 																<div class="dropdown float-right">
 																	<a href="#" class="dropdown-toggle card-drop" data-toggle="dropdown" aria-expanded="true">
@@ -238,9 +233,9 @@
 																				 </a>
 																	<div class="dropdown-menu dropdown-menu-right">
 																		<!-- item-->
-																		<a href="{{ redirect(url_for('eliminarD', nombre = disciplina['nombre'])) }}" class="dropdown-item">Eliminar Disciplina</a>
+																		<a href="{{ url_for('eliminarD', nombre = disciplina['nombredisciplina']) }}" class="dropdown-item">Eliminar Disciplina</a>
 																		<!-- item-->
-																		<a href="{{ redirect(url_for('modificarD', nombre = disciplina['nombre'])) }}" class="dropdown-item">Modificar Disciplina</a>
+																		<a href="{{ url_for('modificarD', nombre = disciplina['nombredisciplina']) }}" class="dropdown-item">Modificar Disciplina</a>
 																	</div>
 																</div>
 															</td>

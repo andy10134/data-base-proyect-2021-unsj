@@ -4,13 +4,72 @@ import InstitucionDisciplina from "../models/Institucion_disciplina";
 import Dicta from "../models/Dicta";
 import Sala from "../models/Sala";
 
-import { validationResult } from 'express-validator';
+import {
+    validationResult
+} from 'express-validator';
 import Inscripcion from "../models/Inscripcion";
 import jwt from "jsonwebtoken";
 import sequelize from "../db/db";
 
 
 //for the query https://stackoverflow.com/questions/61257195/sequelize-associations-between-two-tables
+//create createInstituciones
+export async function createInstituciones(req, res) {
+    const errors = validationResult(req);
+    const token = req.headers.authorization.split(" ")[1];
+    const user = jwt.decode(token);
+
+    if (!errors.isEmpty()) {
+        res.status(422).jsonp(errors.array());
+    } else if (!user.codinst && user.tipousuario != 'Administrador') {
+        res.status(401).json({
+            msg: 'Unauthorized'
+        });
+    } else {
+        Institucion.create({
+            codinst: req.body.codinst,
+            nombre: req.body.nombre,
+            direccion: req.body.direccion,
+            telefono: req.body.telefono
+        }).then(institucion => {
+            User.findByPk(user.email).then((usuario) => {
+                usuario.tipousuario = "Administrador";
+                usuario.codisnt = institucion.codinst
+                
+                usuario.save().then(response => {
+                    let jwtToken = jwt.sign({
+                        email: response.email,
+                        tipousuario: response.tipousuario,
+                        nombredeusuario: response.nombredeusuario,
+                        codinst: response.codinst
+                    }, "longer-secret-is-better", {
+                        expiresIn: "1h"
+                    });
+    
+                    res.status(200).json({
+                        token: jwtToken,
+                        expiresIn: 3600,
+                        msg: response
+                    });
+    
+                }).catch(err => {
+                    res.status(500).json({
+                        error: error
+                    });
+                });
+            }).catch(error => {
+                res.status(500).json({
+                    error: error
+                });
+            });
+        }).catch(err => {
+            res.status(500).json({
+                error: err
+            });
+        });
+    }
+}
+
 //test
 export async function viewInstituciones(req, res) {
 
@@ -64,8 +123,8 @@ export function viewInstitucionDisciplinas(req, res) {
         });
     } else {
         InstitucionDisciplina.findAll({
-            where:{
-                codinst : user.codinst
+            where: {
+                codinst: user.codinst
             }
             /*include: {
                 model: Disciplina,
@@ -151,7 +210,7 @@ export async function viewInstitucionDisciplinaCupo(req, res) {
                 msg: 'Unauthorized'
             });
         } else {
-            Disciplina.findByPk(req.params.nombredisciplina , {
+            Disciplina.findByPk(req.params.nombredisciplina, {
                 attributes: {
                     include: [
                         [
@@ -181,11 +240,10 @@ export async function viewInstitucionDisciplinaCupo(req, res) {
                                 .replace('$codinst', user.codinst)
                                 .replace('$numerosala', req.params.numerosala)
                                 .replace('$nombredisciplina', req.params.nombredisciplina)
-                                .replace('$fecha', req.body.fecha /*'2021-02-13'*/)
-                                .replace('$inicio', req.body.inicio /*'15:00:00'*/)
-                                .replace('$fin', req.body.fin /*'16:00:00'*/)
-                            )
-                            ,
+                                .replace('$fecha', req.body.fecha /*'2021-02-13'*/ )
+                                .replace('$inicio', req.body.inicio /*'15:00:00'*/ )
+                                .replace('$fin', req.body.fin /*'16:00:00'*/ )
+                            ),
                             'cupo'
                         ]
                     ]
@@ -221,15 +279,13 @@ export async function viewInstitucionEntrenadores(req, res) {
         });
     } else {
         Institucion.findByPk(user.codinst, {
-            include:[
-                {
-                    model: Sala,
-                    include:{
-                        model:Dicta,
-                        attributes:['email','nombredisciplina' , 'nombredia','inicio', 'fin']
-                    }
+            include: [{
+                model: Sala,
+                include: {
+                    model: Dicta,
+                    attributes: ['email', 'nombredisciplina', 'nombredia', 'inicio', 'fin']
                 }
-            ],
+            }],
         }).then(clases => {
             if (!clases) {
                 res.status(404).json({
@@ -261,12 +317,12 @@ export async function updateInstitucionDisciplina(req, res) {
     } else {
         InstitucionDisciplina.findOne({
             where: {
-                nombredisciplina : req.params.nombredisciplina,
-                codinst : user.codinst
+                nombredisciplina: req.params.nombredisciplina,
+                codinst: user.codinst
             }
         }).then(institucion => {
-            institucion.descripcion = !req.body.descripcion ? institucion.descripcion : req.body.descripcion ; 
-            institucion.precioclase = !req.body.precioclase ? institucion.precioclase : req.body.precioclase ; 
+            institucion.descripcion = !req.body.descripcion ? institucion.descripcion : req.body.descripcion;
+            institucion.precioclase = !req.body.precioclase ? institucion.precioclase : req.body.precioclase;
             institucion.save().then(response => {
                 res.status(200).json({
                     data: response,

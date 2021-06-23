@@ -8,6 +8,7 @@ import { viewInstitucionClientes } from '../controllers/Institucion.controller'
 import { viewInstitucionDisciplinaCupo } from '../controllers/Institucion.controller'
 import { viewInstitucionEntrenadores } from '../controllers/Institucion.controller'
 import { updateInstitucionDisciplina } from '../controllers/Institucion.controller'
+import { createInstituciones } from '../controllers/Institucion.controller'
 
 const authorize = require("../core/auth");
 const router = Router();
@@ -18,6 +19,7 @@ router.get('/', viewInstituciones);
 router.get('/disciplines', authorize, viewInstitucionDisciplinas);
 router.get('/customers', authorize, viewInstitucionClientes);
 router.get('/trainers', authorize, viewInstitucionEntrenadores);
+router.get('/institutions/signup', authorize, createInstituciones);
 router.get('/availability/:nombredisciplina/:numerosala',
     [
         check('nombredisciplina', 'Nombredisciplina is required')

@@ -26,7 +26,7 @@ router.post('/inscriptions/:email', authorize, check('email', 'Email is required
     .isEmail(), viewInscripcionesUsuario);
 router.get('/trainers', authorize, viewInstitucionEntrenadores);
 router.post('/signup', authorize, createInstituciones);
-router.get('/delete', authorize, deleteInstitucion);
+router.post('/delete', authorize, deleteInstitucion);
 router.post('/delete/discipline/:nombredisciplina',
     [
         check('nombredisciplina', 'Nombredisciplina is required')

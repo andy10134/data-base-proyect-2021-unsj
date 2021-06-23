@@ -35,7 +35,7 @@ export async function createInstituciones(req, res) {
             User.findByPk(user.email).then((usuario) => {
                 usuario.tipousuario = "Administrador";
                 usuario.codisnt = institucion.codinst
-                
+
                 usuario.save().then(response => {
                     let jwtToken = jwt.sign({
                         email: response.email,
@@ -45,13 +45,13 @@ export async function createInstituciones(req, res) {
                     }, "longer-secret-is-better", {
                         expiresIn: "1h"
                     });
-    
+
                     res.status(200).json({
                         token: jwtToken,
                         expiresIn: 3600,
                         msg: response
                     });
-    
+
                 }).catch(err => {
                     res.status(500).json({
                         error: error
@@ -388,6 +388,75 @@ export async function deleteInstitucionDisciplina(req, res) {
                     });
                 });
             });
+        }).catch(err => {
+            return res.status(500).json({
+                message: "Server error",
+                error: err
+            });
+        });
+    }
+}
+
+
+
+//Necesito la contrasenia y el nombre de la disciplina a eliminar
+export async function deleteInstitucion(req, res) {
+    const token = req.headers.authorization.split(" ")[1];
+    const user = jwt.decode(token);
+
+    if (user.codinst == null && user.tipousuario != 'Administrador') {
+        res.status(401).json({
+            msg: 'Unauthorized'
+        });
+    } else {
+        let getUser;
+
+        User.findByPk(user.email).then(user => {
+            if (!user) {
+                return res.status(404).json({
+                    message: "Invalid email"
+                });
+            }
+            getUser = user;
+            return bcrypt.compare(req.body.contraseña, user.contraseña);
+        }).then(response => {
+            if (!response) {
+                return res.status(401).json({
+                    message: "Authentication failed"
+                });
+            }
+            Institucion.findByPk(getUser.codinst).then(institucion => {
+                if (!institucion) {
+                    return res.status(404).json({
+                        message: "Invalid user"
+                    });
+                }
+                institucion.destroy().then(data => {
+                    getUser.tipousuario = "Usuario";
+                    getUser.codinst = null;
+                    getUser.save().then(data => {
+                        res.status(200).json({
+                            data: data,
+                            msg: 'Discipline has been deleted'
+                        });
+                    }).catch(err => {
+                        return res.status(500).json({
+                            message: "Server error",
+                            error: err
+                        });
+                    });
+                }).catch(err => {
+                    return res.status(500).json({
+                        message: "Server error",
+                        error: err
+                    });
+                });
+            }).catch(err => {
+                return res.status(500).json({
+                    message: "Server error",
+                    error: err
+                });
+            });;
         }).catch(err => {
             return res.status(500).json({
                 message: "Server error",

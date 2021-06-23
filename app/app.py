@@ -220,8 +220,10 @@ def handledata2():
                 flash('Verifica que todos los campos esten completos')
                 return redirect(url_for('registrar'))
             else:
+                data = r.json()
                 session['email'] = request.form['email']
                 session['password'] = request.form['password']
+                session['token'] = data['token']
                 return redirect(url_for('registrarInst'))
         else:
             flash('Verifica que todos los campos esten completos')
@@ -245,7 +247,7 @@ def handledata3():
                 'adress' : request.form['adress'], 
                 'phoneInst' : request.form['phoneInst']
                 }
-                r = requests.post("", json=params) 
+                r = requests.post("vvvvvvvvvvvvvvv", json=params) 
                 r.raise_for_status()
             except requests.exceptions.RequestException: 
                 flash('Verifica que todos los campos esten completos y los datos sean correctos')
@@ -309,11 +311,11 @@ def cambiarcontra():
 @app.route('/cambiarcontra', methods = ['POST'])
 def handledata5():
     if request.method == 'POST':
-        if(request.form['contraseñavieja'] and request.form['contraseñaactual']):
+        if(request.form['contraseñavieja'] and request.form['contraseñanueva']):
             
             try:
                 headersAPI = {'Authorization': 'Bearer '+session['token']}
-                params = {'email' : session['email'], 'contraseña' : request.form['contraseñavieja'], 'nuevacontraseña' : request.form['contraseñaactual']}
+                params = {'email' : session['email'], 'contraseña' : request.form['contraseñavieja'], 'nuevacontraseña' : request.form['contraseñanueva']}
                 r = requests.post("http://localhost:4000/api/users/update/password", json=params, headers=headersAPI)
                 r.raise_for_status()
             except requests.exceptions.RequestException: 
@@ -321,9 +323,9 @@ def handledata5():
                 return redirect(url_for('cambiarcontra')) 
             else:
                 datos = r.json()
-                session['password'] = request.form['contraseñaactual']
-                session['token'] = datos['token']
-                return redirect(url_for('index'))
+                session['password'] = request.form['contraseñanueva']
+                flash('Se cambio con exito la contraseña')
+                return redirect(url_for('cambiarcontra'))
         else:
             flash('Verifica los datos ingresados, contraseña inválida')
             return redirect(url_for('cambiarcontra'))
@@ -344,8 +346,8 @@ def handledata7(nombre):
         if(request.form['precio'] and request.form['descripcion']):
             
             try:
-                params = {'precioclase' : session['precio'], 'descripcion' : request.form['descripcion']}
-                url= 'http://localhost:4000/api/institutions/' + str(nombre)
+                params = {'precioclase' : request.form['precio'], 'descripcion' : request.form['descripcion']}
+                url= 'http://localhost:4000/api/institutions/update/discipline/' + str(nombre)
                 headersAPI = {'Authorization': 'Bearer '+session['token']}
                 r = requests.post(url, json=params, headers=headersAPI)
                 r.raise_for_status()

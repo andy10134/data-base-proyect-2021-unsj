@@ -203,17 +203,26 @@
 	                    </div>
 	                    
 	                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+							{% with messages = get_flashed_messages() %}
+							{% if messages %}
+								<ul class=flashes>
+								{% for message in messages %}
+								<li>{{ message }}</li>
+								{% endfor %}
+								</ul>
+							{% endif %}
+							{% endwith %}
                             <div class="card">
                                 <h5 class="card-header">Modificar Disciplina {{nombreDisc}}</h5>
                                 <div class="card-body">
-                                    <form id="form" action="{{ url_for('eliminarD', nombre = nombreDisc) }}" method="POST">
+                                    <form id="form" action="{{ url_for('modificarD', nombre = nombreDisc) }}" method="POST">
                                         <div class="form-group row">
-                                            <label for="precio" class="col-3 col-lg-2 col-form-label text-right">Precio de la clase</label>
-                                            <div class="col-9 col-lg-10">
+                                            <label for="precio" class="col-4 col-lg-4 col-form-label text-right">Precio de la clase</label>
+                                            <div class="col-8 col-lg-8">
                                                 <input name="precio" id="precio" type="number" placeholder="Precio" class="form-control">
                                             </div>
-                                            <label for="descripcion" class="col-3 col-lg-2 col-form-label text-right">Descripción</label>
-                                            <div class="col-9 col-lg-10">
+                                            <label for="descripcion" class="col-4 col-lg-4 col-form-label text-right">Descripción</label>
+                                            <div class="col-8 col-lg-8">
                                                 <input name="descripcion" id="descripcion" type="text" placeholder="Descripción" class="form-control">
                                             </div>
                                         </div>

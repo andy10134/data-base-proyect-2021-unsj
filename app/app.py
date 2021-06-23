@@ -70,9 +70,9 @@ def listarAsitencias():
     if 'email' in session:
         if request.method == 'POST' :
             if request.form['email'] :
-                url = "http://localhost:4000/api/users/inscriptions/" + str(request.form['email'])
+                url = "http://localhost:4000/api/institutions/inscriptions/" + str(request.form['email'])
                 headersAPI = {'Authorization': 'Bearer '+session['token']}
-                r = requests.get(url, headers=headersAPI)
+                r = requests.post(url, headers=headersAPI)
                 if r.status_code == 401:
                     try:
                         params = {'email' : session['email'], 'password' : session['password']}
@@ -91,8 +91,11 @@ def listarAsitencias():
                         data = r.json() #ver el json del andy
                         return render_template('asistencias.html', asistencias = data['data'], sesion = session)
                     else:
-                        flash('Ocurrio un error en la conexión')
-                        return render_template('home.html')
+                        if (r.status_code == 404):
+                            return render_template('asistencias.html', sesion = session)
+                        else:
+                            flash('Ocurrio un error en la conexión')
+                            return redirect(url_for('index'))
             else:
                 flash('Verifica que todos los campos esten completos')
                 return redirect(url_for('index'))
@@ -233,7 +236,7 @@ def handledata2():
 
 @app.route('/registrarIns')
 def registrarInst():
-    if ('email' in session):
+    if not ('nomInst' in session):
         return render_template('registrarInst.html')
     else:
         return redirect(url_for('index'))
@@ -243,23 +246,32 @@ def handledata3():
     if request.method == 'POST' :
         if(request.form['nameInst'] and request.form['adress'] and request.form['phoneInst']):
             try:
-                params = {'nameInst' : request.form['nameInst'], 
-                'adress' : request.form['adress'], 
-                'phoneInst' : request.form['phoneInst']
+                params = {'nombre' : request.form['nameInst'], 
+                'direccion' : request.form['adress'], 
+                'telefono' : request.form['phoneInst']
                 }
-                r = requests.post("vvvvvvvvvvvvvvv", json=params) 
+                headersAPI = {'Authorization': 'Bearer '+session['token']}
+                r = requests.post("http://localhost:4000/api/institutions/signup", json=params, headers=headersAPI)
                 r.raise_for_status()
             except requests.exceptions.RequestException: 
                 flash('Verifica que todos los campos esten completos y los datos sean correctos')
-                return redirect(url_for('ingresar')) 
+                return redirect(url_for('registrarInst')) 
             else:
+                datos=r.json()
                 #session inst y token
+                session['nomInst'] = request.form['nameInst']
+                session['adress'] = request.form['adress']
+                session['phone'] = request.form['phoneInst']
+                session['numUsu'] = "0"
+                session['numEntr'] = "0"
+                session['numDisc'] = "0"
+                session['token'] = datos['token']
                 return redirect(url_for('index'))
         else:
             flash('Verifica que todos los campos esten completos y los datos sean correctos')
-            return redirect(url_for('ingresar'))
+            return redirect(url_for('registrarInst'))
     else:
-        return redirect(url_for('ingresar'))
+        return redirect(url_for('registrarInst'))
 
 @app.route('/ingresar')
 def ingresar():
@@ -376,19 +388,21 @@ def handledata6(nombre):
         if(request.form['contraseña']):
             
             try:
+                url= 'http://localhost:4000/api/institutions/delete/discipline/' + str(nombre)
+                params = {'contraseña' : request.form['contraseña']}
                 headersAPI = {'Authorization': 'Bearer '+session['token']}
-                r = requests.post("", headers=headersAPI) # eliminar relacion con disciplina
+                r = requests.post(url, headers=headersAPI, json=params) # eliminar relacion con disciplina
                 r.raise_for_status()
             except requests.exceptions.RequestException: 
                 flash('Error al procesar la solicitud')
-                return redirect(url_for('eliminarD')) 
+                return redirect(url_for('eliminarD', nombre=nombre)) 
             else:
                 return redirect(url_for('index'))
         else:
             flash('Verifica los datos ingresados, contraseña inválida')
-            return redirect(url_for('eliminarD'))
+            return redirect(url_for('eliminarD',nombre=nombre))
     else:
-        return redirect(url_for('eliminarD'))
+        return redirect(url_for('eliminarD',nombre=nombre))
 
 @app.route('/eliminarInst')
 def eliminarInst():
@@ -403,8 +417,9 @@ def handledata8():
         if(request.form['contraseña']):
             
             try:
+                params = {'contraseña' : request.form['contraseña']}
                 headersAPI = {'Authorization': 'Bearer '+session['token']}
-                r = requests.post("", headers=headersAPI) # eliminar inst
+                r = requests.post('http://localhost:4000/api/institutions/delete', headers=headersAPI, json=params) # eliminar inst
                 r.raise_for_status()
             except requests.exceptions.RequestException: 
                 flash('Error al procesar la solicitud')

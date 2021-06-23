@@ -42,7 +42,14 @@
     <!-- signup form  -->
     <!-- ============================================================== -->
     <form class="splash-container" action="{{url_for('handledata2')}}" method="POST">
-        {% with messages = get_flashed_messages() %}
+        
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-1">Formulario de Registro</h3>
+                <p>Por favor ingrese los datos de su cuenta.</p>
+            </div>
+            <div class="card-body">
+                {% with messages = get_flashed_messages() %}
 			{% if messages %}
 			<ul class=flashes>
 				{% for message in messages %}
@@ -51,12 +58,6 @@
 			</ul>
 			{% endif %}
 		{% endwith %}
-        <div class="card">
-            <div class="card-header">
-                <h3 class="mb-1">Formulario de Registro</h3>
-                <p>Por favor ingrese los datos de su cuenta.</p>
-            </div>
-            <div class="card-body">
                 <div class="form-group">
                     <input class="form-control form-control-lg" type="text" name="name" required="" placeholder="Nombre" autocomplete="off">
                 </div>

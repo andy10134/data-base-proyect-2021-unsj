@@ -11,6 +11,7 @@ import { updateInstitucionDisciplina } from '../controllers/Institucion.controll
 import { createInstituciones } from '../controllers/Institucion.controller';
 import { deleteInstitucionDisciplina } from '../controllers/Institucion.controller';
 import { deleteInstitucion } from '../controllers/Institucion.controller';
+import { viewInscripcionesUsuario } from '../controllers/Institucion.controller';
 
 const authorize = require("../core/auth");
 const router = Router();
@@ -19,6 +20,10 @@ const router = Router();
 router.get('/', viewInstituciones);
 router.get('/disciplines', authorize, viewInstitucionDisciplinas);
 router.get('/customers', authorize, viewInstitucionClientes);
+router.post('/inscriptions/:email', authorize, check('email', 'Email is required')
+    .not()
+    .isEmpty()
+    .isEmail(), viewInscripcionesUsuario);
 router.get('/trainers', authorize, viewInstitucionEntrenadores);
 router.post('/signup', authorize, createInstituciones);
 router.get('/delete', authorize, deleteInstitucion);

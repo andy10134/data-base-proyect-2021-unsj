@@ -42,12 +42,12 @@ Institucion.hasMany(Sala, {foreignKey: "codinst"});
 //Inscripcion n:n Institucion_disciplina - Usuario
 //User.belongsToMany(InstitucionDisciplina, {through: Inscripcion, foreignKey: "email"});
 //InstitucionDisciplina.belongsToMany(User, {through: Inscripcion});  //Consultar con profesoras
-Inscripcion.belongsTo(User, {foreignKey: "email"});
-User.hasMany(Inscripcion, {foreignKey: 'email'});
-Inscripcion.belongsTo(InstitucionDisciplina, {foreignKey: "idinstdisc"});
-InstitucionDisciplina.hasMany(Inscripcion, {foreignKey: 'idinstdisc'});
+Inscripcion.belongsTo(User, {foreignKey: "email", onDelete:'cascade'});
+User.hasMany(Inscripcion, {foreignKey: 'email', onDelete:'cascade'});
+Inscripcion.belongsTo(InstitucionDisciplina, {foreignKey: "idinstdisc", onDelete: 'cascade'});
+InstitucionDisciplina.hasMany(Inscripcion, {foreignKey: 'idinstdisc', onDelete: 'cascade'});
 
-InstitucionDisciplina.belongsTo(Institucion, {foreignKey: 'codinst'});
+InstitucionDisciplina.belongsTo(Institucion, {foreignKey: 'codinst', onDelete: 'cascade'});
 Institucion.hasMany(InstitucionDisciplina, {foreignKey: 'codinst'});
 
 //InstitucionDisciplina.belongsToMany(User, {through: 'inscripcion', foreignKey: 'idinstdisc'});

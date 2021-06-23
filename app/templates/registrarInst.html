@@ -41,22 +41,23 @@
     <!-- ============================================================== -->
     <!-- signup form  -->
     <!-- ============================================================== -->
-    <form class="splash-container">
-        {% with messages = get_flashed_messages() %}
-			{% if messages %}
-				<ul class=flashes>
-					{% for message in messages %}
-						<li>{{ message }}</li>
-					{% endfor %}
-				</ul>
-			{% endif %}
-		{% endwith %}
+    <form class="splash-container" action="/registrarIns"  method="POST">
+        
         <div class="card">
             <div class="card-header">
                 <h3 class="mb-1">Registro de Institución</h3>
                 <p>Por favor ingrese los datos de su cuenta.</p>
             </div>
             <div class="card-body">
+                {% with messages = get_flashed_messages() %}
+			        {% if messages %}
+				    <ul class=flashes>
+					    {% for message in messages %}
+						    <li>{{ message }}</li>
+					    {% endfor %}
+				        </ul>
+			        {% endif %}
+		        {% endwith %}
                 <div class="form-group">
                     <input class="form-control form-control-lg" type="text" name="nameInst" required="" placeholder="Nombre de la Institución" autocomplete="off">
                 </div>

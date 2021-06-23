@@ -80,7 +80,7 @@ export function loginUsuarios(req, res) {
                         [
                             // Subquery
                             sequelize.literal(`(
-                                    SELECT COUNT(email)
+                                    SELECT COUNT(DISTINCT  email)
                                     FROM salas NATURAL JOIN dicta
                                     WHERE
                                         codinst = $codinst 
@@ -90,7 +90,7 @@ export function loginUsuarios(req, res) {
                         [
                             // Subquery
                             sequelize.literal(`(
-                                    SELECT COUNT(email)
+                                    SELECT COUNT(DISTINCT email)
                                     FROM institucion_disciplina NATURAL JOIN inscripciones
                                     WHERE
                                         institucion_disciplina.codinst = $codinst

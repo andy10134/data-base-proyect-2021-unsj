@@ -397,9 +397,7 @@ export async function deleteInstitucionDisciplina(req, res) {
     }
 }
 
-
-
-//Necesito la contrasenia y el nombre de la disciplina a eliminar
+//Necesito la contrasenia
 export async function deleteInstitucion(req, res) {
     const token = req.headers.authorization.split(" ")[1];
     const user = jwt.decode(token);
